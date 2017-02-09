@@ -70,6 +70,7 @@ public class TradeScalerWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		TradeManager tradeManager =null;
 		frmTradescaler = new JFrame();
 		frmTradescaler.setTitle("TradeScaler Beta");
 		frmTradescaler.setBounds(100, 100, 752, 484);
@@ -90,6 +91,9 @@ public class TradeScalerWindow {
 				List<SignalPushTrade> tradeList = buildTrades("Call");
 				// Initalize the TradeManager
 				TradeManager tradeManager = new TradeManager(tradeList);
+				if(appConfigs.isTestMode()){
+					tradeManager.setTest(true);
+				}
 				// Request Trade
 				tradeManager.sendTrades(); 
 
@@ -109,6 +113,9 @@ public class TradeScalerWindow {
 				List<SignalPushTrade> tradeList = buildTrades("Put");
 				// Initalize the TradeManager
 				TradeManager tradeManager = new TradeManager(tradeList);
+				if(appConfigs.isTestMode()){
+					tradeManager.setTest(true);
+				}
 				// Request Trade
 				tradeManager.sendTrades(); 
 			}
@@ -354,7 +361,7 @@ public class TradeScalerWindow {
 		btn6.setText(appConfigs.getButton6Text());
 		btn7.setText(appConfigs.getButton7Text());
 		btn8.setText(appConfigs.getButton8Text());
-		
+	
 	}
 	
 	/**

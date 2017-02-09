@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author Robert
  *
@@ -18,6 +20,7 @@ public class TradeManager {
 	
 	private List<SignalPushTrade> tradeList;
 	private List<String> spApiUrls;
+	private boolean isTest = true;
 
 	/**
 	 * 
@@ -63,8 +66,12 @@ public class TradeManager {
 		return fixedRateString;
 	}
 
-	// HTTP GET request
-	private void sendGet(String url) throws Exception {
+	/**
+	 * Send the Actual GETt Request to the API 
+	 * @param url
+	 * @throws Exception
+	 */
+	private void sendSpRequest(String url) throws Exception {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -96,14 +103,55 @@ public class TradeManager {
 	public void sendTrades() {
 		String url;
 		List<String> urls = new ArrayList<String>();
+		
+		// Build List of URLs
 		for(SignalPushTrade thisTrade : tradeList){
 			url = buildSpUrl(thisTrade);
 			urls.add(url);
 			System.out.println(url);
 		}
-		
-		//TODO: Send the actual request.
-		
+		// Send Requests
+		for(String thisUrl : urls){
+			try {
+				if(isTest){
+					testSpRequest(thisUrl);					
+				}else{
+					sendSpRequest(thisUrl);
+				}
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Simulate the GET Request to the API 
+	 * @param url
+	 * @throws Exception
+	 */
+	private void testSpRequest(String url) throws Exception {
+
+		JOptionPane.showMessageDialog(null, url, "SP API Call Test... This is what would be sent...", JOptionPane.INFORMATION_MESSAGE);
+
+
+	}
+
+	public List<SignalPushTrade> getTradeList() {
+		return tradeList;
+	}
+
+	public void setTradeList(List<SignalPushTrade> tradeList) {
+		this.tradeList = tradeList;
+	}
+
+	public boolean isTest() {
+		return isTest;
+	}
+
+	public void setTest(boolean isTest) {
+		this.isTest = isTest;
 	}
 
 }
