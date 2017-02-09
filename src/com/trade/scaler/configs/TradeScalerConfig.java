@@ -7,7 +7,10 @@ public class TradeScalerConfig {
 	private String currencyPairs;
 	private String expireCodes;
 	private String binaryPlatform;
-	private Boolean familyOn;
+	private boolean familyOn;
+	private boolean martingaleOn;
+	private String scriptName;
+	
 	private List<ClientConfig> clients = null;
 	private String defaultPrice;
 	
@@ -20,6 +23,7 @@ public class TradeScalerConfig {
 	private String button7Text;
 	private String button8Text;
 	private boolean testMode;
+	
 
 	public String getCurrencyPairs() {
 		return currencyPairs;
@@ -139,6 +143,26 @@ public class TradeScalerConfig {
 
 	public void setTestMode(boolean testMode) {
 		this.testMode = testMode;
+	}
+
+	public boolean isMartingaleOn() {
+		return martingaleOn;
+	}
+
+	public void setMartingaleOn(boolean martingaleOn) {
+		this.martingaleOn = martingaleOn;
+	}
+
+	public void setFamilyOn(boolean familyOn) {
+		this.familyOn = familyOn;
+	}
+
+	public String getScriptName() {
+		return scriptName;
+	}
+
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
 	}
 
 }

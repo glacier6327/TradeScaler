@@ -38,9 +38,29 @@ public class TradeManager {
 	}
 	
 	private String buildSpUrl(SignalPushTrade spTrade){
-		String spParams = "returnType=piped&type=takeTrade" + spTrade.isMartingale() + spTrade.isFamily() + "&mode=" + spTrade.getSpDirection() + "&asset=" + spTrade.getSpAsset() +  "&amount=" + spTrade.getSpAmount() + "&expiry=" + spTrade.getSpExpiry() + "&api=" + spTrade.getSpApi() + "&platform=" + spTrade.getPlatform() + "&name=" + spTrade.getSpName() + "&rate=" + spTrade.getSpRate();
-		String spUrl = "http://"+spTrade.getSpIpAddress()+":"+spTrade.getSpPort()+"/?"+spParams;
-		return spUrl;
+		// TODO: Bid and Ask Need to be pulled from somewhere ultimately calculating rate(bid + ask)/2 ...   Could pull from here... https://www.fxstreet.com/rates-charts/rates :: 
+		Double bid = 1.85;
+		Double ask = 1.66;
+		
+		String fixedRateString = getFixRate(bid,ask);
+		String martingaleParam = spTrade.isMartingale() ? "&tradeType=martingale" : "";
+		String familyParam = spTrade.isFamily() ? "$ff=true" : "";
+		String spParamString = "returnType=piped&type=takeTrade" + martingaleParam + familyParam + "&mode=" + spTrade.getSpDirection() + "&asset=" + spTrade.getSpAsset() +  "&amount=" + spTrade.getSpAmount() + "&expiry=" + spTrade.getSpExpiry() + "&api=" + spTrade.getSpApi() + "&platform=" + spTrade.getPlatform() + "&name=" + spTrade.getSpName() + "&rate=" + fixedRateString;
+		String spFullUrl = "http://"+spTrade.getSpIpAddress()+":"+spTrade.getSpPort()+"/?"+spParamString;
+		return spFullUrl;
+	}
+
+	private String getFixRate(Double bid, Double ask) {
+		Double rate = (bid + ask)/2;
+		String rateString = String.valueOf(rate);
+		String[] strArray = rateString.split("\\.");
+		String begin = strArray[0];
+		String end = strArray[1];
+		int endLen = rateString.split("\\.")[1].length();
+		end = end.substring(0,endLen);
+		end = String.format("%1$-" + 5 + "s", end).replace(' ', '0');
+		String fixedRateString = begin + "." + end;// rateString.substring(0, rateString.indexOf(".") + rateString.length());
+		return fixedRateString;
 	}
 
 	// HTTP GET request
@@ -71,6 +91,19 @@ public class TradeManager {
 		// print result
 		System.out.println(response.toString());
 
+	}
+
+	public void sendTrades() {
+		String url;
+		List<String> urls = new ArrayList<String>();
+		for(SignalPushTrade thisTrade : tradeList){
+			url = buildSpUrl(thisTrade);
+			urls.add(url);
+			System.out.println(url);
+		}
+		
+		//TODO: Send the actual request.
+		
 	}
 
 }

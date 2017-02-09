@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 import com.trade.scaler.configs.ClientConfig;
 import com.trade.scaler.configs.TradeScalerConfig;
 
-public class MainWindow {
+public class TradeScalerWindow {
 
 	private JFrame frmTradescaler;
 	JComboBox cmbTradeExpire;
@@ -46,7 +46,7 @@ public class MainWindow {
 	/**
 	 * Create the application.
 	 */
-	public MainWindow() {
+	public TradeScalerWindow() {
 		initialize();
 	}
 
@@ -57,7 +57,7 @@ public class MainWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow window = new MainWindow();
+					TradeScalerWindow window = new TradeScalerWindow();
 					window.frmTradescaler.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -81,14 +81,17 @@ public class MainWindow {
 		 * Add Call Button
 		 */
 		JButton btnCall = new JButton("Call");
-		btnCall.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnCall.setFont(new Font("Tahoma", Font.ITALIC, 16));
 		btnCall.setBounds(548, 338, 107, 43);
 		frmTradescaler.getContentPane().add(btnCall);
 		btnCall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				// Multi Threaded Calls to VPN APIs
-				JOptionPane.showMessageDialog(frmTradescaler,
-						"This is where I'll be sending synchronous trade requests");
+				// Build the Trade List
+				List<SignalPushTrade> tradeList = buildTrades("Call");
+				// Initalize the TradeManager
+				TradeManager tradeManager = new TradeManager(tradeList);
+				// Request Trade
+				tradeManager.sendTrades(); 
 
 			}
 		});
@@ -97,16 +100,17 @@ public class MainWindow {
 		 * Add Put Button
 		 */
 		JButton btnPut = new JButton("Put");
-		btnPut.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnPut.setFont(new Font("Tahoma", Font.ITALIC, 16));
 		btnPut.setBounds(363, 340, 107, 43);
 		frmTradescaler.getContentPane().add(btnPut);
 		btnPut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// Build the Trade List
 				List<SignalPushTrade> tradeList = buildTrades("Put");
+				// Initalize the TradeManager
 				TradeManager tradeManager = new TradeManager(tradeList);
-				// TODO: tradeManager.
-				
-				//JOptionPane.showMessageDialog(frmTradescaler, "This is where I'll be sending synchronous trade requests");
+				// Request Trade
+				tradeManager.sendTrades(); 
 			}
 		});
 
@@ -121,7 +125,7 @@ public class MainWindow {
 		 * Add Clients List to Scroll Pane
 		 */
 		lstClients = new JList<String>();
-		lstClients.setFont(new Font("Tahoma", Font.PLAIN, 26));
+		lstClients.setFont(new Font("Tahoma", Font.ITALIC, 26));
 		lstClients.setBounds(56, 73, 223, 207);
 		scp.setViewportView(lstClients);
 
@@ -296,20 +300,20 @@ public class MainWindow {
 	/**
 	 *  Creates a List of SignalPushTrade from the appConfigs, Form Fields, and Trade Button
 	 */
-	protected List<SignalPushTrade> buildTrades(String string) {
+	protected List<SignalPushTrade> buildTrades(String direction) {
 		List<SignalPushTrade> theseSpTrades = new ArrayList<SignalPushTrade>();
 		for(ClientConfig thisClient : appConfigs.getClients()){
 			SignalPushTrade spTrade = new SignalPushTrade();
 			spTrade.setFamily(appConfigs.getFamilyOn());
-			spTrade.setMartingale(appConfigs.getFamilyOn());
+			spTrade.setMartingale(spTrade.isMartingale()) ;
 			spTrade.setPlatform(appConfigs.getBinaryPlatform());
 			spTrade.setSpAmount(txtTradeAmount.getText());
 			spTrade.setSpApi(thisClient.getApi());
-			spTrade.setSpAsset("assetmissing");
+			spTrade.setSpAsset(cmbCurrencyPair.getSelectedItem().toString());
 			spTrade.setSpDirection(direction);
 			spTrade.setSpExpiry(cmbTradeExpire.getSelectedItem().toString());
 			spTrade.setSpIpAddress(thisClient.getIpaddress());
-			spTrade.setSpName(thisClient.getName());
+			spTrade.setSpName(appConfigs.getScriptName());
 			spTrade.setSpPort(thisClient.getPort());
 			spTrade.setSpRate("ratemissing");
 			theseSpTrades.add(spTrade);
