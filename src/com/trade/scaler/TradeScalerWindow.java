@@ -72,7 +72,7 @@ public class TradeScalerWindow {
 	private void initialize() {
 		TradeManager tradeManager =null;
 		frmTradescaler = new JFrame();
-		frmTradescaler.setTitle("TradeScaler Beta");
+		frmTradescaler.setTitle("TradeScaler Beta - CreativeWorks");
 		frmTradescaler.setBounds(100, 100, 752, 484);
 		frmTradescaler.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTradescaler.getContentPane().setLayout(null);
@@ -287,7 +287,7 @@ public class TradeScalerWindow {
 		lblClients.setBounds(117, 21, 119, 32);
 		frmTradescaler.getContentPane().add(lblClients);
 
-		JLabel lblTradeWindow = new JLabel("Trade Expire");
+		JLabel lblTradeWindow = new JLabel("Trade Expiry");
 		lblTradeWindow.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		lblTradeWindow.setBounds(338, 129, 150, 26);
 		frmTradescaler.getContentPane().add(lblTradeWindow);
