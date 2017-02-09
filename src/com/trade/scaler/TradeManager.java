@@ -66,57 +66,21 @@ public class TradeManager {
 		return fixedRateString;
 	}
 
-	/**
-	 * Send the Actual GETt Request to the API 
-	 * @param url
-	 * @throws Exception
-	 */
-	private void sendSpRequest(String url) throws Exception {
-
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		// add request header
-		// con.setRequestProperty("User-Agent", USER_AGENT);
-
-		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-
-		// print result
-		System.out.println(response.toString());
-
-	}
-
+	
 	public void sendTrades() {
 		String url;
-		List<String> urls = new ArrayList<String>();
+		//List<String> urls = new ArrayList<String>();
 		
 		// Build List of URLs
 		for(SignalPushTrade thisTrade : tradeList){
 			url = buildSpUrl(thisTrade);
-			urls.add(url);
+			//urls.add(url);
 			System.out.println(url);
-		}
-		// Send Requests
-		for(String thisUrl : urls){
 			try {
 				if(isTest){
-					testSpRequest(thisUrl);					
+					testSpRequest(url, thisTrade.getSpApi());					
 				}else{
-					sendSpRequest(thisUrl);
+					sendSpRequest(url, thisTrade.getSpApi());
 				}
 
 			} catch (Exception e) {
@@ -124,6 +88,16 @@ public class TradeManager {
 				e.printStackTrace();
 			}
 		}
+
+	}
+	
+	/**
+	 * Send the Actual GETt Request to the API 
+	 * @param url
+	 * @throws Exception
+	 */
+	private void sendSpRequest(String url, String api){
+		new TradeThread(api, url).start();
 	}
 	
 	/**
@@ -131,11 +105,8 @@ public class TradeManager {
 	 * @param url
 	 * @throws Exception
 	 */
-	private void testSpRequest(String url) throws Exception {
-
-		JOptionPane.showMessageDialog(null, url, "SP API Call Test... This is what would be sent...", JOptionPane.INFORMATION_MESSAGE);
-
-
+	private void testSpRequest(String url, String api) throws Exception {
+		new TestThread(api, url).start();
 	}
 
 	public List<SignalPushTrade> getTradeList() {
